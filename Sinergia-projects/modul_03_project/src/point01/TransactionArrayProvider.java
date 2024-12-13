@@ -18,11 +18,6 @@ public class TransactionArrayProvider {
             startIndex = endIndex + 1;
         }
 
-//        for (int i = 0; i < count; i++) {
-//            System.out.println(substrings[i]);
-//            System.out.println();
-//        }
-
         return substrings;
     }
 

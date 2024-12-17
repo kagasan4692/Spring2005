@@ -6,17 +6,17 @@ import java.util.Scanner;
 
 public class EnterTheData {
 
-    public static String getData() {
-        String[] dataTransaction = enteredData();
-        String input = "";
-        input = addDataInString(input, "Текущая дата и время", dataTransaction[0]);
-        input = addDataInString(input, "Описание сделки", dataTransaction[1]);
-        input = addDataInString(input, "Сумма сделки", dataTransaction[2]);
+//    public static String getData() {
+//        String[] dataTransaction = enteredData();
+//        String input = "";
+//        input = addDataInString(input, "Текущая дата и время", dataTransaction[0]);
+//        input = addDataInString(input, "Описание сделки", dataTransaction[1]);
+//        input = addDataInString(input, "Сумма сделки", dataTransaction[2]);
+//
+//        return '{' + input.trim() + '}';
+//    }
 
-        return '{' + input.trim() + '}';
-    }
-
-    private static String[] enteredData() {
+    public static String[] enteredData() {
         Scanner scanner = new Scanner(System.in);
 
         String description = getTransactionDescription(scanner);
@@ -33,9 +33,9 @@ public class EnterTheData {
         return dataTransaction;
     }
 
-    private static String addDataInString(String data, String title, String item){
-        return data + "\n" + title + ": " + item + ";";
-    }
+//    private static String addDataInString(String data, String title, String item){
+//        return data + "\n" + title + ": " + item + ";";
+//    }
 
     private static String getDAteTimeNow() {
         LocalDateTime now = LocalDateTime.now();

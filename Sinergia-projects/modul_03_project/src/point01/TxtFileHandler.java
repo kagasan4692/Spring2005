@@ -26,6 +26,10 @@ public class TxtFileHandler extends FileHandler {
                     break;
                 }
             }
+        } catch (IOException e){
+            System.out.println();
+            System.out.println("Создаю файл " + filePath + " ...");
+            System.out.println();
         }
         return content.toString();
     }
@@ -60,15 +64,14 @@ public class TxtFileHandler extends FileHandler {
     }
 
     public void processTransactionFile(EnterTheData enteredData) throws IOException {
-        TransactionArrayProvider dataTransactions = new TransactionArrayProvider();
         TransactionsDataArray dataByMonth = new TransactionsDataArray();
         MonthlyTransactionArrays monthlyTransaction = new MonthlyTransactionArrays();
 
-        this.writeDataToFile(enteredData.getData());
+        writeNewData(enteredData);
 
-        String[] data = dataTransactions.createDataArray(this.read());
+        String[] dataRead = createDataArray(this.read());
 
-        String[][] allTransaction = dataByMonth.getTransactionsArray(data);
+        String[][] allTransaction = dataByMonth.getTransactionsArray(dataRead);
 
         String[][][] transactionByMonth = monthlyTransaction.splitByMonthAndYear(allTransaction);
 
@@ -76,15 +79,68 @@ public class TxtFileHandler extends FileHandler {
 
         this.writeDataToFile(sumByMonth);
 
-        System.out.println("Данные сохранены в файле: " + this.filePath);
+        System.out.println();
+        System.out.println("Новые данные добавлены в файле: " + this.filePath);
     }
 
-    public void writeDataToFile(String data) throws IOException {
+    private void writeNewData(EnterTheData enteredData) {
+        String[] dataTransaction = enteredData.enteredData();
+
+        String input = "";
+        input = addDataInString(input, "Текущая дата и время", dataTransaction[0]);
+        input = addDataInString(input, "Описание сделки", dataTransaction[1]);
+        input = addDataInString(input, "Сумма сделки", dataTransaction[2]);
+
+        String inputLine = input.trim() + "*";
+
+        this.writeDataToFile(inputLine);
+    }
+
+    private static String addDataInString(String data, String title, String item) {
+        return data + "\n" + title + ": " + item + ";";
+    }
+
+    public void writeDataToFile(String data){
         try {
             this.write(this.read() + data);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String[] createDataArray(String input) {
+        String[] substrings = new String[countClosingBraces(input)];
+
+        int startIndex = 0;
+        int count = 0;
+        int middleIndex;
+        int endIndex;
+
+        while (count < countClosingBraces(input)) {
+            startIndex = input.indexOf("Текущая дата и время:", startIndex);
+            middleIndex = input.indexOf("Сумма сделки:", startIndex);
+            endIndex = input.indexOf(';', middleIndex) + 1;
+            String substring = input.substring(startIndex, endIndex);
+
+            substrings[count] = substring;
+
+            startIndex++;
+            count++;
+        }
+
+        return substrings;
+    }
+
+    public static int countClosingBraces(String input) {
+        int count = 0;
+
+        for (int i = 0; i < input.length(); i++) {
+            if (input.charAt(i) == '*') {
+                count++;
+            }
+        }
+
+        return count;
     }
 
 }

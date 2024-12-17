@@ -20,8 +20,16 @@ public class CsvFileHandler extends FileHandler {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                content.append(line).append("\n");
+                if (!line.trim().equals("")) {
+                    content.append(line).append("\n");
+                } else {
+                    break;
+                }
             }
+        } catch (IOException e) {
+            System.out.println();
+            System.out.println("Создаю файл " + filePath + " ...");
+            System.out.println();
         }
         return content.toString();
     }
@@ -41,9 +49,9 @@ public class CsvFileHandler extends FileHandler {
                         sum = sum + parseNumberFormat(data[i][j][2]);
                     }
                 }
-                result.append(separator).append("\n")
-                        .append(monthName).append(" ").append(year).append("\n")
-                        .append("Итог: ").append(String.format("%.2f", sum)).append("\n");
+                result.append("\n").append("Календарный период,").append("Итог").append("\n")
+                        .append(monthName).append(" ").append(year).append(",")
+                        .append(String.format("%.2f", sum).replace(',', '.')).append("\n");
             }
         }
         return result.toString();
@@ -58,15 +66,11 @@ public class CsvFileHandler extends FileHandler {
         TransactionsDataCsvArray dataByMonth = new TransactionsDataCsvArray();
         MonthlyTransactionArrays monthlyTransaction = new MonthlyTransactionArrays();
 
-//        writeNewData(enteredData);
+        writeNewData(enteredData);
 
         String[] dataRead = createDataArray(this.read());
-        for (int i = 0; i < dataRead.length; i++) {
-            System.out.println(dataRead[i]);
-        }
 
         String[][] allTransaction = dataByMonth.getTransactionsArray(dataRead);
-
 
         String[][][] transactionByMonth = monthlyTransaction.splitByMonthAndYear(allTransaction);
 
@@ -75,7 +79,7 @@ public class CsvFileHandler extends FileHandler {
         this.writeDataToFile(sumByMonth);
 
         System.out.println();
-        System.out.println("Новые данные добавлены в файле: " + this.filePath);
+        System.out.println("Новые данные добавлены в файл: " + this.filePath);
     }
 
     public static String[] createDataArray(String input) {
@@ -115,7 +119,7 @@ public class CsvFileHandler extends FileHandler {
     private void writeNewData(EnterTheData enteredData) {
         String[] dataTransaction = enteredData.enteredData();
 
-        String input = dataTransaction[0] + "," + dataTransaction[1] + "," + dataTransaction[2];
+        String input = dataTransaction[0] + "," + dataTransaction[1] + "," + dataTransaction[2].replace(',', '.');
 
 
         String inputLine = input.trim();
@@ -124,16 +128,15 @@ public class CsvFileHandler extends FileHandler {
     }
 
     public void writeDataToFile(String data) {
+        String header = "Текущая дата и время" + "," + "Описание сделки" + "," + "Сумма сделки" + "\n";
         try {
-            String header = "Текущая дата и время" + "," + "Описание сделки" + "," + "Сумма сделки" + "\n";
-
-            if (this.read().equals("")) {
+            if (new File(filePath).length() == 0) {
                 this.write(header + data);
             } else {
                 this.write(this.read() + data);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+
         }
     }
 }
@@ -146,18 +149,15 @@ class TransactionsDataCsvArray {
 
             int startIndex = 0;
             int endIndex = data[i].indexOf(',', startIndex);
-            System.out.println(data[i].substring(startIndex, endIndex - 9).trim());
             transaction[1] = data[i].substring(startIndex, endIndex - 9);
 
             startIndex = endIndex + 1;
             endIndex = data[i].indexOf(',', startIndex);
-            System.out.println(data[i].substring(startIndex, endIndex).trim());
             transaction[0] = data[i].substring(startIndex, endIndex).trim();
 
             startIndex = endIndex + 1;
             endIndex = data[i].length();
 
-            System.out.println(data[i].substring(startIndex, endIndex).trim());
             transaction[2] = data[i].substring(startIndex, endIndex).trim();
 
             result[i] = transaction;

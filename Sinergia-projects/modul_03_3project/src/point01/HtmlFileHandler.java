@@ -36,8 +36,8 @@ public class HtmlFileHandler extends FileHandler {
     @Override
     public String writeSumByMont(String[][][] data) {
         StringBuilder result = new StringBuilder();
-        result.append("<html>\n<head>\n<title>Transaction Summary</title>\n</head>\n<body>\n");
-        result.append("<h1>Итоги по месяцам</h1>\n<table border='1'>\n<tr><th>Месяц</th><th>Год</th><th>Сумма</th></tr>\n");
+//        result.append("<html>\n<head>\n<title>Transaction Summary</title>\n</head>\n<body>\n");
+        result.append("<h3>Итоги по месяцам</h3>\n<table border='1'>\n<tr><th>Месяц</th><th>Год</th><th>Сумма</th></tr>\n");
 
         for (int i = 0; i < data.length; i++) {
             if (data[i] != null) {
@@ -57,7 +57,7 @@ public class HtmlFileHandler extends FileHandler {
             }
         }
 
-        result.append("</table>\n</body>\n</html>");
+        result.append("</table>\n");
         return result.toString();
     }
 
@@ -70,7 +70,17 @@ public class HtmlFileHandler extends FileHandler {
         TransactionsDataHtmlArray dataByMonth = new TransactionsDataHtmlArray();
         MonthlyTransactionArrays monthlyTransaction = new MonthlyTransactionArrays();
 
-        writeNewData(enteredData);
+        String header = "<html lang=\"ru\">\n<head>\n<meta charset=\"utf-8\">\n<title>Transactions</title>\n" +
+                "</head>\n<body>\n<h3>Список транзакций</h3>\n<table border='1'>\n" +
+                "<tr><th>Дата</th><th>Описание</th><th>Сумма</th></tr>\n";
+
+        String closeTable = "</table>\n";
+
+        String footer = "</body>\n</html>";
+
+        String enteredRow = writeNewData(enteredData);
+        write(header + enteredRow + closeTable);
+
         String[] dataRead = createDataArray(this.read());
 
         String[][] allTransactions = dataByMonth.getTransactionsArray(dataRead);
@@ -78,7 +88,8 @@ public class HtmlFileHandler extends FileHandler {
 
         String sumByMonth = writeSumByMont(transactionsByMonth);
         System.out.println(sumByMonth);
-//        write(sumByMonth);
+
+        writeToFile(sumByMonth + footer);
 
 //        System.out.println("Данные обновлены в файле: " + filePath);
     }
@@ -117,27 +128,19 @@ public class HtmlFileHandler extends FileHandler {
         return count;
     }
 
-    private void writeNewData(EnterTheData enteredData) throws IOException {
+    private String writeNewData(EnterTheData enteredData) throws IOException {
         String[] dataTransaction = enteredData.enteredData();
         String newRow = "<tr><td>" + dataTransaction[0] + "</td><td>" +
                 dataTransaction[1] + "</td><td>" + dataTransaction[2] + "</td></tr>\n";
 
-        writeDataGeneralParty(newRow);
+        return newRow;
     }
 
-    public void writeDataGeneralParty(String data) throws IOException {
-        String header = "<html lang=\"ru\">\n<head>\n<meta charset=\"utf-8\">\n<title>Transactions</title>\n</head>\n<body>\n<h3>Список транзакций</h3>\n<table border='1'>\n<tr><th>Дата</th><th>Описание</th><th>Сумма</th></tr>\n";
-        if (new File(filePath).length() == 0) {
-            write(header + data + "</table>\n</body>\n</html>");
-        } else {
-            String existingContent = read();
-            int endIndex = existingContent.lastIndexOf("</table>");
-            if (endIndex != -1) {
-                String updatedContent = existingContent.substring(0, endIndex) + data + "</table>\n</body>\n</html>";
-                write(updatedContent);
-            } else {
-                write(existingContent + data + "</table>\n</body>\n</html>");
-            }
+    public void writeToFile(String data) throws IOException {
+        try {
+            this.write(this.read() + data);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

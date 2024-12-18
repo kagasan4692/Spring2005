@@ -3,6 +3,8 @@ package point01;
 import java.io.*;
 
 public class TxtFileHandler extends FileHandler {
+    public static String separator = "----------------";
+
     public TxtFileHandler(String filePath) {
         super(filePath);
     }

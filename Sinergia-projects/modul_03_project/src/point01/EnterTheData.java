@@ -1,21 +1,11 @@
 package point01;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class EnterTheData {
-
-//    public static String getData() {
-//        String[] dataTransaction = enteredData();
-//        String input = "";
-//        input = addDataInString(input, "Текущая дата и время", dataTransaction[0]);
-//        input = addDataInString(input, "Описание сделки", dataTransaction[1]);
-//        input = addDataInString(input, "Сумма сделки", dataTransaction[2]);
-//
-//        return '{' + input.trim() + '}';
-//    }
-
+    public static final String expenditure = "Расход";
+    public static final String Income = "Доход";
     public static String[] enteredData() {
         Scanner scanner = new Scanner(System.in);
 
@@ -24,7 +14,7 @@ public class EnterTheData {
         String typeTransaction = getTypeTransaction(scanner);
 
         String sumTransaction = getSumTransaction(scanner);
-        sumTransaction = typeTransaction.equals("Расход") ? "-" + sumTransaction : sumTransaction;
+        sumTransaction = typeTransaction.equals(expenditure) ? "-" + sumTransaction : sumTransaction;
 
         String dateTimeNow = getDAteTimeNow();
 
@@ -32,10 +22,6 @@ public class EnterTheData {
 
         return dataTransaction;
     }
-
-//    private static String addDataInString(String data, String title, String item){
-//        return data + "\n" + title + ": " + item + ";";
-//    }
 
     private static String getDAteTimeNow() {
         LocalDateTime now = LocalDateTime.now();
@@ -59,7 +45,7 @@ public class EnterTheData {
         String result;
 
         while (true) {
-            System.out.print("Введите число (1 - Расход, 2 - Доход): ");
+            System.out.print("Введите число " + "(1 - " + expenditure + ", 2 - " + Income + "): ");
             int debitOrCredit;
 
             try {
@@ -71,11 +57,11 @@ public class EnterTheData {
 
             switch (debitOrCredit) {
                 case 1:
-                    result = "Расход";
+                    result = expenditure;
 
                     return result;
                 case 2:
-                    result = "Доход";
+                    result = Income;
 
                     return result;
                 default:

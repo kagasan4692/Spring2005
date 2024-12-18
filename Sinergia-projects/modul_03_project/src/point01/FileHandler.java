@@ -4,7 +4,6 @@ import java.io.*;
 
 public class FileHandler {
     String filePath;
-    public static String separator = "----------------";
     public static String[] monthNames = {
             "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
             "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"

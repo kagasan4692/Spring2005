@@ -97,7 +97,7 @@ public class EnterTheData {
 
     private static String roundValue(String strNumber) {
         double value = Double.parseDouble(strNumber);
-        return String.format("%.2f", value);
+        return String.format("%.2f", value).replace(',', '.');
     }
 
     private static boolean isNumeric(String str) {

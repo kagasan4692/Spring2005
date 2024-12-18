@@ -119,7 +119,7 @@ public class CsvFileHandler extends FileHandler {
     private void writeNewData(EnterTheData enteredData) {
         String[] dataTransaction = enteredData.enteredData();
 
-        String input = dataTransaction[0] + "," + dataTransaction[1] + "," + dataTransaction[2].replace(',', '.');
+        String input = dataTransaction[0] + "," + dataTransaction[1] + "," + dataTransaction[2];
 
 
         String inputLine = input.trim();

@@ -52,7 +52,7 @@ public class TxtFileHandler extends FileHandler {
                         sum = sum + parseNumberFormat(data[i][j][2]);
                     }
                 }
-                result = result + separator + "\n" + monthName + " " + year + "\n" + "Итог: " + String.format("%.2f", sum) + "\n";
+                result = result + separator + "\n" + monthName + " " + year + "\n" + "Итог: " + String.format("%.2f", sum).replace(',', '.') + "\n";
             }
         }
 

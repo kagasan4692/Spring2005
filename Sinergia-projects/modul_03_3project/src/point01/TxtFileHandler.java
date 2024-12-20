@@ -3,7 +3,11 @@ package point01;
 import java.io.*;
 
 public class TxtFileHandler extends FileHandler {
-    public static String separator = "----------------";
+    public static final String separator = "----------------";
+
+    public void runTxt() throws IOException{
+        processTransactionFile();
+    }
 
     public TxtFileHandler(String filePath) {
         super(filePath);
@@ -28,7 +32,7 @@ public class TxtFileHandler extends FileHandler {
                     break;
                 }
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println();
             System.out.println("Создаю файл " + filePath + " ...");
             System.out.println();
@@ -65,7 +69,8 @@ public class TxtFileHandler extends FileHandler {
         return Double.parseDouble(strNumber);
     }
 
-    public void processTransactionFile(EnterTheData enteredData) throws IOException {
+    private void processTransactionFile() throws IOException {
+        EnterTheData enteredData = new EnterTheData();
         TransactionsDataTxtArray dataByMonth = new TransactionsDataTxtArray();
         MonthlyTransactionArrays monthlyTransaction = new MonthlyTransactionArrays();
 
@@ -102,7 +107,7 @@ public class TxtFileHandler extends FileHandler {
         return data + "\n" + title + ": " + item + ";";
     }
 
-    public void writeDataToFile(String data){
+    private void writeDataToFile(String data) {
         try {
             this.write(this.read() + data);
         } catch (IOException e) {
@@ -110,7 +115,7 @@ public class TxtFileHandler extends FileHandler {
         }
     }
 
-    public static String[] createDataArray(String input) {
+    private static String[] createDataArray(String input) {
         String[] substrings = new String[countClosingBraces(input)];
 
         int startIndex = 0;
@@ -133,7 +138,7 @@ public class TxtFileHandler extends FileHandler {
         return substrings;
     }
 
-    public static int countClosingBraces(String input) {
+    private static int countClosingBraces(String input) {
         int count = 0;
 
         for (int i = 0; i < input.length(); i++) {

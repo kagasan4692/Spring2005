@@ -23,6 +23,16 @@ public class FileHandler {
         return "";
     }
 
+    public String readListTransactions() throws IOException {
+
+        return "";
+    }
+
+    public String readMonthlyReport() throws IOException {
+
+        return "";
+    }
+
     public String writeSumByMont(String[][][] data){
 
         return "";

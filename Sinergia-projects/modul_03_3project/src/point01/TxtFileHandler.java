@@ -39,6 +39,46 @@ public class TxtFileHandler extends FileHandler {
         }
         return content.toString();
     }
+    @Override
+    public String readListTransactions() throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.equals(separator)) {
+                    content.append(line.replace("*", "")).append("\n");
+                } else {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println();
+            System.out.println("Создаю файл " + filePath + " ...");
+            System.out.println();
+        }
+        return content.toString();
+    }
+    @Override
+    public String readMonthlyReport() throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            int i = 3;
+            while ((line = reader.readLine()) != null) {
+                i++;
+                if (line.equals(separator)){
+                    i = 0;
+                }
+                if (i == 1 || i== 2){
+                    content.append(line).append("\n");
+                }
+
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        return content.toString();
+    }
 
     @Override
     public String writeSumByMont(String[][][] data) {

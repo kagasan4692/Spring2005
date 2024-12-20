@@ -7,10 +7,10 @@ import java.util.Scanner;
 public class RunTxt {
 
     public static final String notDataInfo = "Файл не содержит инфрмации, или отсутсвует!";
-    public static final String createListInfo = "Хотите создать новый список транзакций?";
-    public static final String yesNoInfo = "Если ДА то введите 1, Если НЕТ то введите 2.";
-    public static final String selectOutputTypeInfo = "Хотите посмотреть весь список? Или отчет по месяцам?";
-    public static final String yesNoListInfo = "Список транзакций - 1, Отчет по месяцам 2.";
+    public static final String yesNoInfo = "Получить список транзакций - 1, Выйти из программы - 2.";
+    public static final String yesNoListInfo = "Работаем со списком транзакций - 1, Работаем с отчетом по месяцам 2.";
+    public static final String yesNoReadListInfo = "Получить список транзакций - 1, Добавить новую транзакцию 2.";
+    public static final String yesNoAddNewTransactionInfo = "Добавить новую транзакцию - 1, Выйти из программы 2.";
 
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
@@ -18,19 +18,31 @@ public class RunTxt {
         TxtFileHandler txtHandler = new TxtFileHandler(filePathTxt);
 
         if (fileChecker(filePathTxt)) {
-            System.out.println(selectOutputTypeInfo);
             System.out.println(yesNoListInfo);
-            if (checkEnteredInt(scanner)) {
-                System.out.println("Грузим список!");
+            if (checkEnteredInt(scanner, yesNoListInfo)) {
+                System.out.println(yesNoReadListInfo);
+                if (checkEnteredInt(scanner, yesNoReadListInfo)) {
+                    System.out.println("Список транзакций:");
+                    System.out.println(txtHandler.readListTransactions());
+                    System.out.println(yesNoAddNewTransactionInfo);
+                    if (checkEnteredInt(scanner, yesNoAddNewTransactionInfo)) {
+                        txtHandler.runTxt();
+                    } else {
+                        System.out.println("выходим из программы!");
+                    }
+                } else {
+                    txtHandler.runTxt();
+                }
+
             } else {
                 System.out.println("Работаем по месяцам!");
+                System.out.println(txtHandler.readMonthlyReport());
             }
         } else {
             System.out.println(notDataInfo);
-            System.out.println(createListInfo);
             System.out.println(yesNoInfo);
 
-            if (checkEnteredInt(scanner)) {
+            if (checkEnteredInt(scanner, yesNoInfo)) {
                 txtHandler.runTxt();
             } else {
                 System.out.println("выходим из программы!");
@@ -45,7 +57,7 @@ public class RunTxt {
         return (file.exists() && file.length() > 0);
     }
 
-    private static boolean checkEnteredInt(Scanner scanner) {
+    private static boolean checkEnteredInt(Scanner scanner, String condition) {
         while (true) {
 
             int value;
@@ -64,8 +76,7 @@ public class RunTxt {
                 default:
                     System.out.println("Неверный ввод!");
                     System.out.println("Введите информацию заново: ");
-                    System.out.println(createListInfo);
-                    System.out.println(yesNoInfo);
+                    System.out.println(condition);
             }
         }
 

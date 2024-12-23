@@ -57,9 +57,9 @@ public class TxtFileHandler extends FileHandler {
             System.out.println();
         }
 
-        parseTo2DArray(content.toString());
+        String[][] transactionData = getTransactionData(content.toString());
 
-        return content.toString();
+        return dataListTransactionsToString(transactionData);
     }
     @Override
     public String readMonthlyReport() throws IOException {
@@ -80,7 +80,10 @@ public class TxtFileHandler extends FileHandler {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        return content.toString();
+
+        String[][] reportData = getReportData(content.toString());
+
+        return dataReportToString(reportData);
     }
 
     @Override
@@ -107,7 +110,7 @@ public class TxtFileHandler extends FileHandler {
         return result;
     }
 
-    public static String[][] parseTo2DArray(String input) {
+    public static String[][] getTransactionData(String input) {
 
         String[] blocks = input.split("Текущая дата и время: ");
         String[][] data = new String[blocks.length - 1][3]; // Двумерный массив для хранения данных
@@ -124,6 +127,23 @@ public class TxtFileHandler extends FileHandler {
             data[i - 1][0] = dateTime;
             data[i - 1][1] = description;
             data[i - 1][2] = amount;
+        }
+
+        return data;
+    }
+
+    public static String[][] getReportData(String input) {
+        String[] lines = input.split("\n");
+        String[][] data = new String[lines.length / 2][2]; // Двумерный массив: каждая запись состоит из двух элементов
+
+        int index = 0;
+        for (int i = 0; i < lines.length; i += 2) {
+            String month = lines[i].trim(); // Извлекаем месяц
+            String total = lines[i + 1].replace("Итог: ", "").trim(); // Извлекаем итог
+
+            data[index][0] = month;
+            data[index][1] = total;
+            index++;
         }
 
         return data;

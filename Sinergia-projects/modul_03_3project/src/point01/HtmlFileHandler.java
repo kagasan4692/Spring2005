@@ -54,7 +54,9 @@ public class HtmlFileHandler extends FileHandler {
             System.out.println();
         }
 
-        return getTransactionData(content.toString());
+        String[][] transactionData = getTransactionData(content.toString());
+
+        return dataListTransactionsToString(transactionData);
     }
 
     @Override
@@ -78,7 +80,9 @@ public class HtmlFileHandler extends FileHandler {
             System.out.println(e.getMessage());
         }
 
-        return getSummaryReportData(content.toString());
+        String[][] reportData = getReportData(content.toString());
+
+        return dataReportToString(reportData);
     }
 
     @Override
@@ -109,7 +113,7 @@ public class HtmlFileHandler extends FileHandler {
         return result.toString();
     }
 
-    private static String getTransactionData(String html) {
+    private static String[][] getTransactionData(String html) {
 
         String tableContent = html.substring(html.indexOf("<table"), html.indexOf("</table>") + "</table>".length());
 
@@ -132,10 +136,10 @@ public class HtmlFileHandler extends FileHandler {
             rowIndex++;
         }
 
-        return dataListTransactionsToString(data);
+        return data;
     }
 
-    private static String getSummaryReportData(String html) {
+    private static String[][] getReportData(String html) {
 
         String tableContent = html.substring(html.indexOf("<table"), html.indexOf("</table>") + "</table>".length());
 
@@ -158,47 +162,7 @@ public class HtmlFileHandler extends FileHandler {
             rowIndex++;
         }
 
-        return dataReportToString(data);
-    }
-
-    public static String dataListTransactionsToString(String[][] array) {
-        String result = "";
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
-                if (j == 0) {
-                    result = result + "Текущая дата и время: " + array[i][j] + "; \n";
-                }
-                if (j == 1) {
-                    result = result + "Описание сделки: "+ array[i][j] + "; \n";
-                }
-                if (j == 2) {
-                    result = result + "Сумма сделки: " + array[i][j] + "; \n";
-                }
-
-            }
-
-        }
-
-        return result.trim();
-    }
-
-    public static String dataReportToString(String[][] array) {
-        String result = "";
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
-                if (j == 0) {
-                    result = result + array[i][j] + " " + array[i][j + 1] + "; \n";
-                }
-
-                if (j == 2) {
-                    result = result + "Итог: " + array[i][j] + "; \n";
-                }
-
-            }
-
-        }
-
-        return result.trim();
+        return data;
     }
 
     private static double parseNumberFormat(String strNumber) {

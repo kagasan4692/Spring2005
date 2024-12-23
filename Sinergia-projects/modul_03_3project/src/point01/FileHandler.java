@@ -37,4 +37,43 @@ public class FileHandler {
 
         return "";
     }
+
+    public static String dataListTransactionsToString(String[][] array){
+        String result = "";
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                if (j == 0) {
+                    result = result + "Текущая дата и время: " + array[i][j] + "; \n";
+                }
+                if (j == 1) {
+                    result = result + "Описание сделки: "+ array[i][j] + "; \n";
+                }
+                if (j == 2) {
+                    result = result + "Сумма сделки: " + array[i][j] + "; \n";
+                }
+            }
+        }
+
+        return result.trim();
+    }
+
+    public static String dataReportToString(String[][] array) {
+        String result = "";
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                if (j == 0) {
+                    result = result + array[i][j] + " " + array[i][j + 1] + "; \n";
+                }
+
+                if (j == 2) {
+                    result = result + "Итог: " + array[i][j] + "; \n";
+                }
+
+            }
+
+        }
+
+        return result.trim();
+    }
+
 }

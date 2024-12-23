@@ -3,6 +3,9 @@ package point01;
 import java.io.*;
 
 public class HtmlFileHandler extends FileHandler {
+    public void runHtml() throws IOException {
+        processTransactionFile();
+    }
 
     public HtmlFileHandler(String filePath) {
         super(filePath);
@@ -34,6 +37,51 @@ public class HtmlFileHandler extends FileHandler {
     }
 
     @Override
+    public String readListTransactions() throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.trim().contains("<h3>Итоги по месяцам</h3>")) {
+                    content.append(line).append("\n");
+                } else {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println();
+            System.out.println("Создаю файл " + filePath + " ...");
+            System.out.println();
+        }
+
+        return getTransactionData(content.toString());
+    }
+
+    @Override
+    public String readMonthlyReport() throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            int i = 0;
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().contains("<h3>Итоги по месяцам</h3>")) {
+                    i = 1;
+                }
+
+                if (i > 0) {
+                    i++;
+                    content.append(line).append("\n");
+                }
+
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return getSummaryReportData(content.toString());
+    }
+
+    @Override
     public String writeSumByMont(String[][][] data) {
         StringBuilder result = new StringBuilder();
         result.append("<h3>Итоги по месяцам</h3>\n<table border='1'>\n" +
@@ -61,12 +109,105 @@ public class HtmlFileHandler extends FileHandler {
         return result.toString();
     }
 
+    private static String getTransactionData(String html) {
+
+        String tableContent = html.substring(html.indexOf("<table"), html.indexOf("</table>") + "</table>".length());
+
+        String[] rows = tableContent.split("<tr>");
+
+        String[][] data = new String[rows.length - 2][3]; // Минус заголовок (<th>) и пустая строка до <tr>
+
+        int rowIndex = 0;
+        for (int i = 1; i < rows.length; i++) {
+            if (!rows[i].contains("<td>")) continue;
+
+            String[] cells = rows[i].split("<td>|</td>");
+            int colIndex = 0;
+
+            for (String cell : cells) {
+                if (!cell.trim().isEmpty() && !cell.contains("<")) {
+                    data[rowIndex][colIndex++] = cell.trim();
+                }
+            }
+            rowIndex++;
+        }
+
+        return dataListTransactionsToString(data);
+    }
+
+    private static String getSummaryReportData(String html) {
+
+        String tableContent = html.substring(html.indexOf("<table"), html.indexOf("</table>") + "</table>".length());
+
+        String[] rows = tableContent.split("<tr>");
+
+        String[][] data = new String[rows.length - 2][3]; // Минус заголовок (<th>) и пустая строка до <tr>
+
+        int rowIndex = 0;
+        for (int i = 1; i < rows.length; i++) {
+            if (!rows[i].contains("<td>")) continue;
+
+            String[] cells = rows[i].split("<td>|</td>");
+            int colIndex = 0;
+
+            for (String cell : cells) {
+                if (!cell.trim().isEmpty() && !cell.contains("<")) {
+                    data[rowIndex][colIndex++] = cell.trim();
+                }
+            }
+            rowIndex++;
+        }
+
+        return dataReportToString(data);
+    }
+
+    public static String dataListTransactionsToString(String[][] array) {
+        String result = "";
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                if (j == 0) {
+                    result = result + "Текущая дата и время: " + array[i][j] + "; \n";
+                }
+                if (j == 1) {
+                    result = result + "Описание сделки: "+ array[i][j] + "; \n";
+                }
+                if (j == 2) {
+                    result = result + "Сумма сделки: " + array[i][j] + "; \n";
+                }
+
+            }
+
+        }
+
+        return result.trim();
+    }
+
+    public static String dataReportToString(String[][] array) {
+        String result = "";
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                if (j == 0) {
+                    result = result + array[i][j] + " " + array[i][j + 1] + "; \n";
+                }
+
+                if (j == 2) {
+                    result = result + "Итог: " + array[i][j] + "; \n";
+                }
+
+            }
+
+        }
+
+        return result.trim();
+    }
+
     private static double parseNumberFormat(String strNumber) {
         strNumber = strNumber.replace(',', '.');
         return Double.parseDouble(strNumber);
     }
 
-    public void processTransactionFile(EnterTheData enteredData) throws IOException {
+    private void processTransactionFile() throws IOException {
+        EnterTheData enteredData = new EnterTheData();
         TransactionsDataHtmlArray dataByMonth = new TransactionsDataHtmlArray();
         MonthlyTransactionArrays monthlyTransaction = new MonthlyTransactionArrays();
 
@@ -94,7 +235,7 @@ public class HtmlFileHandler extends FileHandler {
         System.out.println("Данные обновлены в файле: " + filePath);
     }
 
-    public static String getRows(String string) {
+    private static String getRows(String string) {
         int startIndex = string.indexOf("general-table");
         int endIndex = string.indexOf("</table>", startIndex);
 
@@ -104,7 +245,7 @@ public class HtmlFileHandler extends FileHandler {
         return quoteTable[1].trim();
     }
 
-    public static String[] createDataArray(String input) {
+    private static String[] createDataArray(String input) {
         String[] substrings = new String[countClosingBraces(input)];
 
         int startIndex = 0;
@@ -123,7 +264,7 @@ public class HtmlFileHandler extends FileHandler {
         return substrings;
     }
 
-    public static int countClosingBraces(String input) {
+    private static int countClosingBraces(String input) {
         int count = 0;
         int startIndex = 0;
         for (int i = 0; i < input.length(); i++) {
@@ -146,7 +287,7 @@ public class HtmlFileHandler extends FileHandler {
         return newRow;
     }
 
-    public void writeToFile(String data){
+    private void writeToFile(String data) {
         try {
 
             this.write(this.read() + data);

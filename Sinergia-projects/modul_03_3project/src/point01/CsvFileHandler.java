@@ -3,7 +3,7 @@ package point01;
 import java.io.*;
 
 public class CsvFileHandler extends FileHandler {
-    public void runTxt() throws IOException{
+    public void runTxt() throws IOException {
         processTransactionFile();
     }
 
@@ -44,7 +44,7 @@ public class CsvFileHandler extends FileHandler {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (!line.trim().equals("")) {
-                    content.append(line.replace("*", "")).append("\n");
+                    content.append(line).append("\n");
                 } else {
                     break;
                 }
@@ -54,7 +54,8 @@ public class CsvFileHandler extends FileHandler {
             System.out.println("Создаю файл " + filePath + " ...");
             System.out.println();
         }
-        return content.toString();
+
+        return getTransactionData(content.toString());
     }
 
     public String readMonthlyReport() throws IOException {
@@ -64,10 +65,10 @@ public class CsvFileHandler extends FileHandler {
             int i = 3;
             while ((line = reader.readLine()) != null) {
                 i++;
-                if (line.trim().equals("")){
+                if (line.trim().equals("")) {
                     i = 0;
                 }
-                if (i == 1 || i== 2){
+                if (i == 1 || i == 2) {
                     content.append(line).append("\n");
                 }
 
@@ -75,7 +76,8 @@ public class CsvFileHandler extends FileHandler {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        return content.toString();
+
+        return getSummaryReportData(content.toString());
     }
 
     @Override
@@ -99,6 +101,78 @@ public class CsvFileHandler extends FileHandler {
             }
         }
         return result.toString();
+    }
+
+    private static String getTransactionData(String html) {
+        String[] rows = html.split("\n");
+
+        String[][] data = new String[rows.length - 1][3];
+
+        for (int i = 0; i < rows.length; i++) {
+            String[] cells = rows[i].split(",");
+            if (i > 0){
+                data[i - 1] = cells;
+            }
+
+        }
+
+        return dataListTransactionsToString(data);
+    }
+
+    private static String getSummaryReportData(String html) {
+        String[] rows = html.split("\n");
+
+        String[][] data = new String[rows.length - 1][2];
+
+        for (int i = 0; i < rows.length; i++) {
+            String[] cells = rows[i].split(",");
+            if (i > 0){
+                data[i - 1] = cells;
+            }
+
+        }
+
+        return dataReportToString(data);
+    }
+
+    public static String dataListTransactionsToString(String[][] array) {
+        String result = "";
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                if (j == 0) {
+                    result = result + "Текущая дата и время: " + array[i][j] + "; \n";
+                }
+                if (j == 1) {
+                    result = result + "Описание сделки: "+ array[i][j] + "; \n";
+                }
+                if (j == 2) {
+                    result = result + "Сумма сделки: " + array[i][j] + "; \n";
+                }
+
+            }
+
+        }
+
+        return result.trim();
+    }
+
+    public static String dataReportToString(String[][] array) {
+        String result = "";
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                if (j == 0) {
+                    result = result + array[i][j] + "; \n";
+                }
+
+                if (j == 1) {
+                    result = result + "Итог: " + array[i][j] + "; \n";
+                }
+
+            }
+
+        }
+
+        return result.trim();
     }
 
     private static Double parseNumberFormat(String strNumber) {

@@ -56,6 +56,9 @@ public class TxtFileHandler extends FileHandler {
             System.out.println("Создаю файл " + filePath + " ...");
             System.out.println();
         }
+
+        parseTo2DArray(content.toString());
+
         return content.toString();
     }
     @Override
@@ -102,6 +105,28 @@ public class TxtFileHandler extends FileHandler {
 
 
         return result;
+    }
+
+    public static String[][] parseTo2DArray(String input) {
+
+        String[] blocks = input.split("Текущая дата и время: ");
+        String[][] data = new String[blocks.length - 1][3]; // Двумерный массив для хранения данных
+
+        for (int i = 1; i < blocks.length; i++) {
+
+            String block = blocks[i].trim();
+            String[] lines = block.split(";\n");
+
+            String dateTime = lines[0].trim(); // Дата и время
+            String description = lines[1].replace("Описание сделки: ", "").trim(); // Описание
+            String amount = lines[2].replace("Сумма сделки: ", "").replace(";", "").trim(); // Сумма
+
+            data[i - 1][0] = dateTime;
+            data[i - 1][1] = description;
+            data[i - 1][2] = amount;
+        }
+
+        return data;
     }
 
     private static Double parseNumberFormat(String strNumber) {

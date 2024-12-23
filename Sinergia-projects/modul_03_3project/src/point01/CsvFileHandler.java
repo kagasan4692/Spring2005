@@ -3,6 +3,10 @@ package point01;
 import java.io.*;
 
 public class CsvFileHandler extends FileHandler {
+    public void runTxt() throws IOException{
+        processTransactionFile();
+    }
+
     public CsvFileHandler(String filePath) {
         super(filePath);
     }
@@ -28,8 +32,48 @@ public class CsvFileHandler extends FileHandler {
             }
         } catch (IOException e) {
             System.out.println();
-            System.out.println("Ð¡Ð¾Ð·Ð´Ð°ÑŽ Ñ„Ð°Ð¹Ð» " + filePath + " ...");
+            System.out.println("Создаю файл " + filePath + " ...");
             System.out.println();
+        }
+        return content.toString();
+    }
+
+    public String readListTransactions() throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.trim().equals("")) {
+                    content.append(line.replace("*", "")).append("\n");
+                } else {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println();
+            System.out.println("Создаю файл " + filePath + " ...");
+            System.out.println();
+        }
+        return content.toString();
+    }
+
+    public String readMonthlyReport() throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            int i = 3;
+            while ((line = reader.readLine()) != null) {
+                i++;
+                if (line.trim().equals("")){
+                    i = 0;
+                }
+                if (i == 1 || i== 2){
+                    content.append(line).append("\n");
+                }
+
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
         return content.toString();
     }
@@ -49,7 +93,7 @@ public class CsvFileHandler extends FileHandler {
                         sum = sum + parseNumberFormat(data[i][j][2]);
                     }
                 }
-                result.append("\n").append("ÐšÐ°Ð»ÐµÐ½Ð´Ð°Ñ€Ð½Ñ‹Ð¹ Ð¿ÐµÑ€Ð¸Ð¾Ð´,").append("Ð˜Ñ‚Ð¾Ð³").append("\n")
+                result.append("\n").append("Календарный период,").append("Итог").append("\n")
                         .append(monthName).append(" ").append(year).append(",")
                         .append(String.format("%.2f", sum).replace(',', '.')).append("\n");
             }
@@ -62,7 +106,8 @@ public class CsvFileHandler extends FileHandler {
         return Double.parseDouble(strNumber);
     }
 
-    public void processTransactionFile(EnterTheData enteredData) throws IOException {
+    public void processTransactionFile() throws IOException {
+        EnterTheData enteredData = new EnterTheData();
         TransactionsDataCsvArray dataByMonth = new TransactionsDataCsvArray();
         MonthlyTransactionArrays monthlyTransaction = new MonthlyTransactionArrays();
 
@@ -79,7 +124,7 @@ public class CsvFileHandler extends FileHandler {
         this.writeDataToFile(sumByMonth);
 
         System.out.println();
-        System.out.println("ÐÐ¾Ð²Ñ‹Ðµ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ñ‹ Ð² Ñ„Ð°Ð¹Ð»: " + this.filePath);
+        System.out.println("Новые данные добавлены в файл: " + this.filePath);
     }
 
     public static String[] createDataArray(String input) {
@@ -128,7 +173,7 @@ public class CsvFileHandler extends FileHandler {
     }
 
     public void writeDataToFile(String data) {
-        String header = "Ð¢ÐµÐºÑƒÑ‰Ð°Ñ Ð´Ð°Ñ‚Ð° Ð¸ Ð²Ñ€ÐµÐ¼Ñ" + "," + "ÐžÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ ÑÐ´ÐµÐ»ÐºÐ¸" + "," + "Ð¡ÑƒÐ¼Ð¼Ð° ÑÐ´ÐµÐ»ÐºÐ¸" + "\n";
+        String header = "Текущая дата и время" + "," + "Описание сделки" + "," + "Сумма сделки" + "\n";
         try {
             if (new File(filePath).length() == 0) {
                 this.write(header + data);

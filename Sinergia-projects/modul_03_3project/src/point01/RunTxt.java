@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class RunTxt {
 
     public static final String notDataInfo = "Файл не содержит инфрмации, или отсутсвует!";
-    public static final String yesNoInfo = "Получить список транзакций - 1, Выйти из программы - 2.";
+    public static final String yesNoInfo = "Добавить новую транзакцию - 1, Выйти из программы - 2.";
     public static final String yesNoListInfo = "Работаем со списком транзакций - 1, Работаем с отчетом по месяцам 2.";
     public static final String yesNoReadListInfo = "Получить список транзакций - 1, Добавить новую транзакцию 2.";
     public static final String yesNoAddNewTransactionInfo = "Добавить новую транзакцию - 1, Выйти из программы 2.";

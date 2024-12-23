@@ -65,7 +65,7 @@ public class FileHandler {
                     result = result + array[i][j] + " " + array[i][j + 1] + "; \n";
                 }
 
-                if (j == 2) {
+                if (j == 1) {
                     result = result + "Итог: " + array[i][j] + "; \n";
                 }
 

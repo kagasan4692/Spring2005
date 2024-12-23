@@ -55,20 +55,22 @@ public class CsvFileHandler extends FileHandler {
             System.out.println();
         }
 
-        return getTransactionData(content.toString());
+        String[][] transactionData = getTransactionData(content.toString());
+
+        return dataListTransactionsToString(transactionData);
     }
 
     public String readMonthlyReport() throws IOException {
         StringBuilder content = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
-            int i = 3;
+            int i = 0;
             while ((line = reader.readLine()) != null) {
-                i++;
+
                 if (line.trim().equals("")) {
-                    i = 0;
+                    i = 1;
                 }
-                if (i == 1 || i == 2) {
+                if (i == 1) {
                     content.append(line).append("\n");
                 }
 
@@ -77,12 +79,15 @@ public class CsvFileHandler extends FileHandler {
             System.out.println(e.getMessage());
         }
 
-        return getSummaryReportData(content.toString());
+        String[][] reportData = getReportData(content.toString());
+
+        return dataReportToString(reportData);
     }
 
     @Override
     public String writeSumByMont(String[][][] data) {
         StringBuilder result = new StringBuilder();
+        result.append("\n").append("Календарный период,").append("Итог").append("\n");
         for (int i = 0; i < data.length; i++) {
             if (data[i] != null) {
                 String year = data[i][0][1].substring(0, 4);
@@ -95,15 +100,17 @@ public class CsvFileHandler extends FileHandler {
                         sum = sum + parseNumberFormat(data[i][j][2]);
                     }
                 }
-                result.append("\n").append("Календарный период,").append("Итог").append("\n")
-                        .append(monthName).append(" ").append(year).append(",")
+                result.append(monthName).append(" ").append(year).append(",")
                         .append(String.format("%.2f", sum).replace(',', '.')).append("\n");
             }
+
         }
+        System.out.println(result.toString());
+
         return result.toString();
     }
 
-    private static String getTransactionData(String html) {
+    private static String[][] getTransactionData(String html) {
         String[] rows = html.split("\n");
 
         String[][] data = new String[rows.length - 1][3];
@@ -116,63 +123,20 @@ public class CsvFileHandler extends FileHandler {
 
         }
 
-        return dataListTransactionsToString(data);
+        return data;
     }
 
-    private static String getSummaryReportData(String html) {
-        String[] rows = html.split("\n");
+    private static String[][] getReportData(String html) {
+        String[] lines = html.trim().split("\n");
 
-        String[][] data = new String[rows.length - 1][2];
-
-        for (int i = 0; i < rows.length; i++) {
-            String[] cells = rows[i].split(",");
-            if (i > 0){
-                data[i - 1] = cells;
-            }
-
+        String[][] data = new String[lines.length - 1][2];
+        for (int i = 1; i < lines.length; i++) {
+            String[] cells = lines[i].split(",");
+            data[i - 1][0] = cells[0].trim();
+            data[i - 1][1] = cells[1].trim();
         }
 
-        return dataReportToString(data);
-    }
-
-    public static String dataListTransactionsToString(String[][] array) {
-        String result = "";
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
-                if (j == 0) {
-                    result = result + "Текущая дата и время: " + array[i][j] + "; \n";
-                }
-                if (j == 1) {
-                    result = result + "Описание сделки: "+ array[i][j] + "; \n";
-                }
-                if (j == 2) {
-                    result = result + "Сумма сделки: " + array[i][j] + "; \n";
-                }
-
-            }
-
-        }
-
-        return result.trim();
-    }
-
-    public static String dataReportToString(String[][] array) {
-        String result = "";
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
-                if (j == 0) {
-                    result = result + array[i][j] + "; \n";
-                }
-
-                if (j == 1) {
-                    result = result + "Итог: " + array[i][j] + "; \n";
-                }
-
-            }
-
-        }
-
-        return result.trim();
+        return data;
     }
 
     private static Double parseNumberFormat(String strNumber) {

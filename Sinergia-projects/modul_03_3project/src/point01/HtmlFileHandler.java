@@ -3,7 +3,8 @@ package point01;
 import java.io.*;
 
 public class HtmlFileHandler extends FileHandler {
-    public void runHtml() throws IOException {
+    @Override
+    public void run() throws IOException {
         processTransactionFile();
     }
 
@@ -145,16 +146,19 @@ public class HtmlFileHandler extends FileHandler {
 
         String[] rows = tableContent.split("<tr>");
 
-        String[][] data = new String[rows.length - 2][3]; // Минус заголовок (<th>) и пустая строка до <tr>
+        String[][] data = new String[rows.length - 2][2];
 
         int rowIndex = 0;
         for (int i = 1; i < rows.length; i++) {
+
             if (!rows[i].contains("<td>")) continue;
 
-            String[] cells = rows[i].split("<td>|</td>");
+            String[] cells = parseRow(rows[i]);
+
             int colIndex = 0;
 
-            for (String cell : cells) {
+            for (int j = 0; j < cells.length; j++) {
+                String cell = cells[j];
                 if (!cell.trim().isEmpty() && !cell.contains("<")) {
                     data[rowIndex][colIndex++] = cell.trim();
                 }
@@ -163,6 +167,23 @@ public class HtmlFileHandler extends FileHandler {
         }
 
         return data;
+    }
+
+    public static String[] parseRow(String input) {
+
+        String[] cells = input.split("</td><td>|<td>|</td></tr>");
+
+        String[] resultArray = new String[2];
+
+        for (int i = 1; i < cells.length; i++) {
+            if (i == 2) {
+                resultArray[0] = cells[i - 1] + " " + cells[i];
+            } else if (i == 3) {
+                resultArray[1] = cells[i];
+            }
+        }
+
+        return resultArray;
     }
 
     private static double parseNumberFormat(String strNumber) {

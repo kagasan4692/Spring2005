@@ -3,7 +3,8 @@ package point01;
 import java.io.*;
 
 public class CsvFileHandler extends FileHandler {
-    public void runTxt() throws IOException {
+    @Override
+    public void run() throws IOException {
         processTransactionFile();
     }
 
@@ -105,7 +106,6 @@ public class CsvFileHandler extends FileHandler {
             }
 
         }
-        System.out.println(result.toString());
 
         return result.toString();
     }

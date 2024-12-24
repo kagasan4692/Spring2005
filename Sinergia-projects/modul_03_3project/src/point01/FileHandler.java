@@ -14,6 +14,10 @@ public class FileHandler {
 
     }
 
+    public void run() throws IOException {
+
+    }
+
     public void write(String content) throws IOException {
 
     }
@@ -62,7 +66,7 @@ public class FileHandler {
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[i].length; j++) {
                 if (j == 0) {
-                    result = result + array[i][j] + " " + array[i][j + 1] + "; \n";
+                    result = result + array[i][j] + "; \n";
                 }
 
                 if (j == 1) {

@@ -5,7 +5,8 @@ import java.io.*;
 public class TxtFileHandler extends FileHandler {
     public static final String separator = "----------------";
 
-    public void runTxt() throws IOException{
+    @Override
+    public void run() throws IOException{
         processTransactionFile();
     }
 

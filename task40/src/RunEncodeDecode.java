@@ -1,17 +1,26 @@
 import java.util.Scanner;
 
 public class RunEncodeDecode {
+
+
     public static void main(String[] args) {
         Decoder decoder = new RussianToLatinDecoder();
 
-        System.out.println("Пример: ");
-        String sourceRu = "Привет, как дела?";
-        String encoded = decoder.encode(sourceRu);
-        System.out.println("Encoded: " + encoded);
+        String encoded;
+        String decoded;
 
-        String sourceEn = "Dobr_y den', kak dela?";
-        String decoded = decoder.decode(sourceEn);
-        System.out.println("Decoded: " + decoded);
+        System.out.println("Пример: ");
+        System.out.print("Ввод: ");
+        String sourceRu = "Привет, как дела?";
+        System.out.println(sourceRu);
+        encoded = decoder.encode(sourceRu);
+        System.out.println("Вывод: " + encoded);
+
+        System.out.print("Ввод: ");
+        String sourceEn = "dobr-y den', kak deliwki?";
+        System.out.println(sourceEn);
+        decoded = decoder.decode(sourceEn);
+        System.out.println("Вывод: " + decoded);
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("введите русскими буквами слово, которое нужно перекодировать!");

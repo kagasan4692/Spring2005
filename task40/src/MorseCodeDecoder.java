@@ -29,7 +29,7 @@ public class MorseCodeDecoder implements Decoder {
                     }
                 }
                 if (!found) {
-                    encoded.append("? "); // Для неизвестных символов
+                    encoded.append("? ");
                 }
             }
         }
@@ -39,9 +39,9 @@ public class MorseCodeDecoder implements Decoder {
     @Override
     public String decode(String encoded) {
         StringBuilder decoded = new StringBuilder();
-        String[] words = encoded.split(" / "); // Разделяем слова
+        String[] words = encoded.split(" / ");
         for (String word : words) {
-            String[] letters = word.split(" "); // Разделяем буквы
+            String[] letters = word.split(" ");
             for (String letter : letters) {
                 boolean found = false;
                 for (int i = 0; i < morseCodes.length; i++) {
@@ -52,7 +52,7 @@ public class MorseCodeDecoder implements Decoder {
                     }
                 }
                 if (!found) {
-                    decoded.append("?"); // Для неизвестных кодов
+                    decoded.append("?");
                 }
             }
             decoded.append(" ");

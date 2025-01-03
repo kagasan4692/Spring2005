@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class runMorseCodeDecoder {
+public class RunMorseCodeDecoder {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Decoder decoder = new MorseCodeDecoder();

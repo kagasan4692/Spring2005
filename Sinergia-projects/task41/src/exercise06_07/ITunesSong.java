@@ -1,4 +1,4 @@
-package exercise06;
+package exercise06_07;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -7,6 +7,7 @@ import java.net.http.HttpResponse;
 
 public class ITunesSong {
     public static String outFormat;
+
     public static void run(String outFormat) {
         ITunesSong.outFormat = outFormat;
         try {
@@ -37,27 +38,17 @@ public class ITunesSong {
 
     @Override
     public String toString() {
-        return "<track>\n" +
-                "  <artist>" + escapeXml(artistName) + "</artist>\n" +
-                "  <name>" + escapeXml(trackName) + "</name>\n" +
-                "  <album>" + escapeXml(collectionName) + "</album>\n" +
-                "  <price>" + trackPrice + "</price>\n" +
-                "  <releaseDate>" + escapeXml(releaseDate) + "</releaseDate>\n" +
-                "</track>" + outFormat;
-    }
-
-    private String escapeXml(String input) {
-        if (input == null) {
-            return "";
+        switch (outFormat) {
+            case "XML":
+                return getXml();
+            case "JSON":
+                return getJSON();
+            default:
+                throw new IllegalArgumentException("Unsupported output format: " + outFormat);
         }
-        return input.replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\"", "&quot;")
-                .replace("'", "&apos;");
     }
 
-    public static ITunesSong[] getRandomTracks(int count) throws Exception {
+    private static ITunesSong[] getRandomTracks(int count) throws Exception {
         String url = "https://itunes.apple.com/search?term=random&entity=song&limit=" + count;
         String response = makeITunesRequest(url);
 
@@ -83,7 +74,7 @@ public class ITunesSong {
         return tracks;
     }
 
-    public static String makeITunesRequest(String url) throws Exception {
+    private static String makeITunesRequest(String url) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -94,7 +85,7 @@ public class ITunesSong {
         return response.body();
     }
 
-    public static String[] extractArray(String json, String arrayKey) {
+    private static String[] extractArray(String json, String arrayKey) {
         int arrayStart = json.indexOf("\"" + arrayKey + "\":[") + arrayKey.length() + 3;
         int arrayEnd = json.indexOf("]", arrayStart);
         String arrayContent = json.substring(arrayStart, arrayEnd);
@@ -102,7 +93,7 @@ public class ITunesSong {
         return arrayContent.split("(?<=\\}),");
     }
 
-    public static String extractField(String json, String fieldKey) {
+    private static String extractField(String json, String fieldKey) {
         String key = "\"" + fieldKey + "\":";
         int startIndex = json.indexOf(key) + key.length();
 
@@ -122,10 +113,52 @@ public class ITunesSong {
         }
     }
 
-    public static String extractFieldOptional(String json, String fieldKey) {
+    private static String extractFieldOptional(String json, String fieldKey) {
         if (!json.contains("\"" + fieldKey + "\":")) {
             return null;
         }
         return extractField(json, fieldKey);
+    }
+
+    private String getXml(){
+        return "<track>\n" +
+                "  <artist>" + escapeXml(artistName) + "</artist>\n" +
+                "  <name>" + escapeXml(trackName) + "</name>\n" +
+                "  <album>" + escapeXml(collectionName) + "</album>\n" +
+                "  <price>" + trackPrice + "</price>\n" +
+                "  <releaseDate>" + escapeXml(releaseDate) + "</releaseDate>\n" +
+                "</track>" + outFormat;
+    }
+
+    private String escapeXml(String input) {
+        if (input == null) {
+            return "";
+        }
+        return input.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;");
+    }
+
+    private String getJSON(){
+        return "{\n" +
+                "  \"artist\": \"" + escapeJson(artistName) + "\",\n" +
+                "  \"name\": \"" + escapeJson(trackName) + "\",\n" +
+                "  \"album\": \"" + escapeJson(collectionName) + "\",\n" +
+                "  \"price\": " + trackPrice + ",\n" +
+                "  \"releaseDate\": \"" + escapeJson(releaseDate) + "\"\n" +
+                "}";
+    }
+
+    private String escapeJson(String input) {
+        if (input == null) {
+            return "";
+        }
+        return input.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 }

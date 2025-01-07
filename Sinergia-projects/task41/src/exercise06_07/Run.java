@@ -1,4 +1,4 @@
-package exercise06;
+package exercise06_07;
 
 import java.util.Scanner;
 
@@ -10,7 +10,7 @@ public class Run {
             System.out.print("XML или JSON: ");
             String format = scanner.nextLine();
             if (format.equals("XML") || format.equals("JSON")){
-                ITunesSong.run("JSON");
+                ITunesSong.run(format);
                 break;
             } else {
                 System.out.println("Неверный ввод!");

@@ -1,8 +1,6 @@
-package exercise02;
-
-public class Run implements NewsFetcher {
+public class Exercise02 implements NewsFetcher {
     public static void main(String[] args) {
-        Run app = new Run();
+        Exercise02 app = new Exercise02();
         String keyword = "science";
 
         System.out.println("Запрос новостей для категории: " + keyword);

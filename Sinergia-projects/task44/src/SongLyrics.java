@@ -6,6 +6,6 @@ public abstract class SongLyrics {
         if (lyrics == null || lyrics.isEmpty()) {
             return "Lyrics not found.";
         }
-        return "Song Lyrics:\n" + lyrics;
+        return "\n************\nSong Lyrics:\n" + lyrics;
     }
 }

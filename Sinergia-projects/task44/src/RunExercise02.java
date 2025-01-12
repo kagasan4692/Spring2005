@@ -3,12 +3,10 @@ public class RunExercise02 {
         String filePath = "songs.txt";
         SongLyrics songLyrics = new FileSongLyrics(filePath);
 
-        String song1 = "Сибирские морозы";
-        String song2 = "Анастасия";
-        String song3 = "Лучший город земли";
+        String[] songsArray = {"Сибирские морозы", "Анастасия", "Лучший город земли"};
 
-        System.out.println(songLyrics.formatLyrics(songLyrics.getLyrics(song1)));
-        System.out.println(songLyrics.formatLyrics(songLyrics.getLyrics(song2)));
-        System.out.println(songLyrics.formatLyrics(songLyrics.getLyrics(song3)));
+        for (int i = 0; i < songsArray.length; i++) {
+            System.out.println(songLyrics.formatLyrics(songLyrics.getLyrics(songsArray[i])));
+        }
     }
 }

@@ -7,7 +7,7 @@ public class RunExercise05 {
         System.out.println("Выберите источник для поиска текстов песен:");
         System.out.println("1. Файл \"songs.txt\"");
         System.out.println("2. Папка \"songs/...\"");
-        System.out.println("3. API");
+        System.out.println("3. API \"api.lyrics.ovh\"");
         int choice = scanner.nextInt();
         scanner.nextLine();
 

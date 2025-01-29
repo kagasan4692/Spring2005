@@ -5,8 +5,8 @@ import java.util.Set;
 
 public class UniqueWordCounter {
 
-    public Set<String> getUniqueWordsHashSet(ArrayList<String> listWords) {
-        Set<String> uniqueWords = new HashSet<>();
+    public HashSet<String> getUniqueWordsHashSet(ArrayList<String> listWords) {
+        HashSet<String> uniqueWords = new HashSet<>();
 
         for (String word : listWords) {
             uniqueWords.add(word);
@@ -15,8 +15,8 @@ public class UniqueWordCounter {
         return uniqueWords;
     }
 
-    public Set<String> getUniqueWordsLinkedHashSet(ArrayList<String> listWords) {
-        Set<String> uniqueWords = new LinkedHashSet<>();
+    public LinkedHashSet<String> getUniqueWordsLinkedHashSet(ArrayList<String> listWords) {
+        LinkedHashSet<String> uniqueWords = new LinkedHashSet<>();
 
         for (String word : listWords) {
             uniqueWords.add(word);
